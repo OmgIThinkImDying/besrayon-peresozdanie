@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ShortLink 30min</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a0b2e 0%, #2d1b4e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(46, 30, 76, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(180, 130, 255, 0.15);
+            border: 1px solid rgba(200, 160, 255, 0.2);
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #d4bfff;
+            text-align: center;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 20px rgba(160, 100, 255, 0.3);
+            margin-bottom: 8px;
+        }
+        .sub {
+            text-align: center;
+            color: #a084c9;
+            font-size: 14px;
+            margin-bottom: 28px;
+            border-bottom: 1px dashed #4a2e6a;
+            padding-bottom: 16px;
+        }
+        .label {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+            color: #c9b0f0;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 60px;
+            border: none;
+            background: #2c1a47;
+            color: #f0e6ff;
+            font-size: 16px;
+            outline: 2px solid transparent;
+            transition: 0.2s;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .input-field:focus {
+            outline: 2px solid #a77bff;
+            background: #342155;
+            box-shadow: 0 0 20px rgba(150, 100, 255, 0.3);
+        }
+        .input-field::placeholder {
+            color: #7a5d9e;
+            font-weight: 300;
+        }
+        .btn-primary {
+            width: 100%;
+            margin-top: 28px;
+            padding: 16px;
+            border: none;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #9b6bff, #7530d9);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(120, 50, 220, 0.5);
+            transition: 0.15s;
+            text-transform: uppercase;
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 12px rgba(120, 50, 220, 0.3);
+        }
+        .output-area {
+            margin-top: 28px;
+            background: #1e0e33;
+            border-radius: 32px;
+            padding: 18px 16px;
+            border: 1px solid #4f3270;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .output-area.visible {
+            display: flex;
+        }
+        .short-link-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #2b1943;
+            border-radius: 60px;
+            padding: 4px 4px 4px 20px;
+            border: 1px solid #6a4a8a;
+        }
+        .short-link-box span {
+            color: #dcc6ff;
+            font-size: 14px;
+            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+        .btn-copy {
+            background: #5d3a8a;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.1s;
+            white-space: nowrap;
+        }
+        .btn-copy:active {
+            background: #3f2363;
+            transform: scale(0.94);
+        }
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #25D366;
+            color: #0a0a0a;
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 17px;
+            transition: 0.1s;
+            border: none;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .btn-whatsapp:active {
+            transform: scale(0.96);
+            background: #1da85a;
+        }
+        .page-name-display {
+            color: #f0e0ff;
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            padding: 6px 0;
+            letter-spacing: 1px;
+            background: #27173d;
+            border-radius: 40px;
+            border: 1px solid #6a4a8a;
+        }
+        .timer-info {
+            color: #b192d6;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 8px;
+            background: #1f0f31;
+            padding: 8px;
+            border-radius: 40px;
+            border: 1px dashed #5e3d7a;
+        }
+        .status-msg {
+            color: #b79ae6;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 24px;
+        }
+        .footer-note {
+            margin-top: 24px;
+            color: #5d4479;
+            font-size: 12px;
+            text-align: center;
+            border-top: 1px solid #34224d;
+            padding-top: 16px;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <h1>⚡ 30min Link</h1>
+    <div class="sub">Фиолетовая магия коротких ссылок</div>
+
+    <!-- Форма создания -->
+    <div id="createForm">
+        <label class="label">📛 Имя страницы</label>
+        <input class="input-field" id="pageNameInput" placeholder="Например: СВЕТА_БОБИ" value="МОЯ_СТРАНИЦА">
+
+        <label class="label">📱 Номер телефона (без пробелов)</label>
+        <input class="input-field" id="phoneInput" placeholder="79001234567" value="79001234567">
+
+        <button class="btn-primary" id="createBtn">✨ Создать ссылку</button>
+        <div class="status-msg" id="statusMsg"></div>
+    </div>
+
+    <!-- Результат (короткая страница) -->
+    <div class="output-area" id="resultArea">
+        <div class="page-name-display" id="displayName">ИМЯ</div>
+        <a class="btn-whatsapp" id="waLink" href="#" target="_blank">📲 Перейти в WhatsApp</a>
+        <div class="short-link-box">
+            <span id="shortLinkText">ссылка</span>
+            <button class="btn-copy" id="copyBtn">📋 Копировать</button>
+        </div>
+        <div class="timer-info" id="timerInfo">⏳ Ссылка удалится через 30 минут</div>
+        <button id="backBtn" style="background:transparent; border:1px solid #5d3a8a; color:#b79ae6; padding:12px; border-radius:60px; margin-top:8px; cursor:pointer; font-weight:600;">← Создать новую</button>
+    </div>
+
+    <div class="footer-note">Ссылки живут 30 мин • Только index.html</div>
+</div>
+
+<script>
+    (function() {
+        // ---------- Конфиг ----------
+        const TTL_MINUTES = 30;
+        const STORAGE_KEY = 'swill_links';   // ключ для localStorage
+        const CURRENT_PAGE_KEY = 'swill_current';
+
+        // DOM
+        const createForm = document.getElementById('createForm');
+        const resultArea = document.getElementById('resultArea');
+        const pageNameInput = document.getElementById('pageNameInput');
+        const phoneInput = document.getElementById('phoneInput');
+        const createBtn = document.getElementById('createBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const displayName = document.getElementById('displayName');
+        const waLink = document.getElementById('waLink');
+        const shortLinkText = document.getElementById('shortLinkText');
+        const copyBtn = document.getElementById('copyBtn');
+        const timerInfo = document.getElementById('timerInfo');
+        const backBtn = document.getElementById('backBtn');
+
+        // ---------- Хранилище ----------
+        function loadLinks() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveLinks(links) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+        }
+
+        // Очистка просроченных (вызывается при старте и перед каждым показом)
+        function cleanExpired() {
+            const links = loadLinks();
+            const now = Date.now();
+            let changed = false;
+            for (const [slug, data] of Object.entries(links)) {
+                if (now - data.created > TTL_MINUTES * 60 * 1000) {
+                    delete links[slug];
+                    changed = true;
+                }
+            }
+            if (changed) saveLinks(links);
+            return links;
+        }
+
+        // Генерация короткого slug (имя страницы + случайный суффикс для уникальности)
+        function generateSlug(pageName) {
+            // Убираем пробелы, заменяем нелатинские/нецифры на _
+            let base = pageName.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\u0400-\u04FF]/g, '_');
+            if (!base) base = 'page';
+            // Добавляем короткую случайную строку, чтобы избежать коллизий
+            const rand = Math.random().toString(36).substring(2, 6);
+            return base + '_' + rand;
+        }
+
+        // Создать новую ссылку
+        function createLink(pageName, phone) {
+            // Очистка просроченных перед записью
+            cleanExpired();
+
+            const links = loadLinks();
+            const slug = generateSlug(pageName);
+            // Нормализуем телефон: убираем всё кроме цифр и +
+            const rawPhone = phone.replace(/[^\d+]/g, '');
+            // Для WhatsApp нужен номер в формате 7XXXXXXXXXX (или с +)
+            let waNumber = rawPhone;
+            if (!waNumber.startsWith('+')) {
+                // если нет +, добавляем + по умолчанию (для международного формата)
+                waNumber = '+' + waNumber;
+            }
+
+            const data = {
+                pageName: pageName.trim(),
+                phone: waNumber,
+                created: Date.now(),
+                ttl: TTL_MINUTES * 60 * 1000
+            };
+            links[slug] = data;
+            saveLinks(links);
+
+            // Сохраняем текущий slug для отображения
+            localStorage.setItem(CURRENT_PAGE_KEY, slug);
+
+            return slug;
+        }
+
+        // Получить данные по текущему slug
+        function getCurrentLinkData() {
+            const slug = localStorage.getItem(CURRENT_PAGE_KEY);
+            if (!slug) return null;
+            const links = loadLinks();
+            const data = links[slug];
+            if (!data) return null;
+            // Проверка TTL
+            if (Date.now() - data.created > TTL_MINUTES * 60 * 1000) {
+                // удаляем
+                delete links[slug];
+                saveLinks(links);
+                localStorage.removeItem(CURRENT_PAGE_KEY);
+                return null;
+            }
+            return { slug, ...data };
+        }
+
+        // ---------- Отображение ----------
+        function showResult(slug, data) {
+            // Скрываем форму, показываем результат
+            createForm.style.display = 'none';
+            resultArea.classList.add('visible');
+
+            displayName.textContent = data.pageName || 'Без имени';
+
+            // Ссылка на WhatsApp
+            let waHref = 'https://wa.me/' + data.phone.replace(/^\+/, '');
+            waLink.href = waHref;
+
+            // Формируем короткую ссылку (используем текущий URL + slug)
+            const baseUrl = window.location.href.split('?')[0].split('#')[0];
+            const shortUrl = baseUrl + '?p=' + encodeURIComponent(slug);
+            shortLinkText.textContent = shortUrl;
+
+            // Таймер обратного отсчета (обновляем каждую секунду)
+            const created = data.created;
+            const ttlMs = TTL_MINUTES * 60 * 1000;
+            const updateTimer = () => {
+                const now = Date.now();
+                const elapsed = now - created;
+                const remaining = Math.max(0, ttlMs - elapsed);
+                if (remaining <= 0) {
+                    timerInfo.textContent = '⏳ Ссылка удалена (30 мин истекли)';
+                    // можно автоматически пересоздать? нет, просто показываем
+                    // но мы удалим при следующем обращении
+                    return;
+                }
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                timerInfo.textContent = `⏳ Ссылка удалится через ${mins} мин ${secs} сек`;
+            };
+            updateTimer();
+            const timerInterval = setInterval(updateTimer, 1000);
+
+            // Сохраняем интервал для очистки при переходе назад
+            window._timerInterval = timerInterval;
+
+            // Копирование
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(shortUrl).then(() => {
+                    copyBtn.textContent = '✅ Скопировано!';
+                    setTimeout(() => { copyBtn.textContent = '📋 Копировать'; }, 2000);
+                }).catch(() => {
+                    // fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = shortUrl;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    copyBtn.textContent = '✅ Скопировано!';
+                    setTimeout(() => { copyBtn.textContent = '📋 Копировать'; }, 2000);
+                });
+            };
+        }
+
+        // Сброс к форме создания
+        function resetToForm() {
+            if (window._timerInterval) {
+                clearInterval(window._timerInterval);
+                window._timerInterval = null;
+            }
+            createForm.style.display = 'block';
+            resultArea.classList.remove('visible');
+            localStorage.removeItem(CURRENT_PAGE_KEY);
+            statusMsg.textContent = '';
+            // Очищаем поля (но можно оставить)
+        }
+
+        // ---------- Обработка создания ----------
+        createBtn.addEventListener('click', function() {
+            const pageName = pageNameInput.value.trim();
+            let phone = phoneInput.value.trim();
+
+            if (!pageName) {
+                statusMsg.textContent = '⚠️ Введите имя страницы';
+                return;
+            }
+            if (!phone) {
+                statusMsg.textContent = '⚠️ Введите номер телефона';
+                return;
+            }
+            // Убираем пробелы из номера
+            phone = phone.replace(/\s/g, '');
+            if (!phone.match(/^[\d+]{7,18}$/)) {
+                statusMsg.textContent = '⚠️ Номер должен содержать только цифры и + (7-18 символов)';
+                return;
+            }
+
+            statusMsg.textContent = '⏳ Создание...';
+
+            try {
+                const slug = createLink(pageName, phone);
+                const links = loadLinks();
+                const data = links[slug];
+                if (!data) {
+                    statusMsg.textContent = '❌ Ошибка создания';
+                    return;
+                }
+                statusMsg.textContent = '✅ Готово!';
+                showResult(slug, data);
+            } catch (e) {
+                statusMsg.textContent = '❌ Ошибка: ' + e.message;
+            }
+        });
+
+        // Назад
+        backBtn.addEventListener('click', function() {
+            resetToForm();
+        });
+
+        // ---------- Автозагрузка при старте ----------
+        function init() {
+            // Очищаем просроченные
+            cleanExpired();
+
+            // Проверяем, есть ли текущая ссылка
+            const current = getCurrentLinkData();
+            if (current) {
+                // Показываем результат
+                showResult(current.slug, current);
+            } else {
+                // Форма по умолчанию
+                resetToForm();
+                // Можно вставить пример
+                pageNameInput.value = 'МОЯ_СТРАНИЦА';
+                phoneInput.value = '79001234567';
+            }
+        }
+
+        init();
+
+        // Дополнительно: при загрузке страницы с параметром ?p=slug показываем эту страницу (если есть)
+        const urlParams = new URLSearchParams(window.location.search);
+        const slugParam = urlParams.get('p');
+        if (slugParam) {
+            const links = loadLinks();
+            const data = links[slugParam];
+            if (data && Date.now() - data.created <= TTL_MINUTES * 60 * 1000) {
+                // Сохраняем как текущую
+                localStorage.setItem(CURRENT_PAGE_KEY, slugParam);
+                // Перезагружаем отображение
+                const newCurrent = getCurrentLinkData();
+                if (newCurrent) {
+                    resetToForm(); // сброс формы
+                    showResult(newCurrent.slug, newCurrent);
+                }
+            } else {
+                // если просрочена или нет — удаляем
+                if (data) {
+                    delete links[slugParam];
+                    saveLinks(links);
+                }
+                // редирект на чистый URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // Периодическая очистка (каждые 30 сек)
+        setInterval(() => {
+            const links = loadLinks();
+            const now = Date.now();
+            let changed = false;
+            for (const [slug, data] of Object.entries(links)) {
+                if (now - data.created > TTL_MINUTES * 60 * 1000) {
+                    delete links[slug];
+                    changed = true;
+                }
+            }
+            if (changed) {
+                saveLinks(links);
+                // Если текущая страница удалена — сбросить
+                const currentSlug = localStorage.getItem(CURRENT_PAGE_KEY);
+                if (currentSlug && !links[currentSlug]) {
+                    localStorage.removeItem(CURRENT_PAGE_KEY);
+                    resetToForm();
+                }
+            }
+        }, 30000);
+
+        // Обработка нажатия Enter
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && createForm.style.display !== 'none') {
+                createBtn.click();
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>
